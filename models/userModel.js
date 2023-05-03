@@ -2,6 +2,12 @@ const mongoose = require("mongoose");
 //const validator = require('validator');
 const bcrypt = require("bcrypt");
 const userSchema = new mongoose.Schema({
+  googleId: {
+    type: String,
+  },
+  facebookId: {
+    type: String,
+  },
   name: {
     type: String,
     required: ["User must have name"],
@@ -19,9 +25,13 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: [true, "Please Enter Valid Password"],
+    //required: [true, "Please Enter Valid Password"],
     // minlength: 10,
     select: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
   },
 });
 userSchema.pre("save", async function (next) {
@@ -29,8 +39,11 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
-userSchema.methods.correctPassword=async function(candidatePassword,userPassword){
- return await bcrypt.compare(candidatePassword,userPassword)
-}
+userSchema.methods.correctPassword = async function (
+  candidatePassword,
+  userPassword
+) {
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
 const user = mongoose.model("User", userSchema);
 module.exports = user;

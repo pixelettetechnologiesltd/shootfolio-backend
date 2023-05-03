@@ -1,13 +1,14 @@
 const User = require("./../models/userModel");
 const jwt = require("jsonwebtoken");
-const { promisify } = require('util');
-
+const { promisify } = require("util");
+const passport = require("../config/passport");
+const catchAsync=require("../utils/catchAsync")
 const signtoken = (id) => {
-  return jwt.sign({ id: id }, process.env.SECRET_KEY, {
-    expiresIn: process.env.JWT_EXPIRES,
+  return jwt.sign({ id: id }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_EXPIRES_IN,
   });
 };
-exports.signup = async (req, res, next) => {
+exports.signup = catchAsync(async (req, res, next) => {
   const user = await User.create(req.body);
   const userId = user._id;
   const token = signtoken(userId);
@@ -18,7 +19,7 @@ exports.signup = async (req, res, next) => {
       user,
     },
   });
-};
+});
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
   if (!email || !password) {
@@ -38,22 +39,56 @@ exports.login = async (req, res, next) => {
     token,
   });
 };
-exports.protect = async(req, res, next) => {
+exports.protect = async (req, res, next) => {
   let token = "";
   if (req.headers.authorization && req.headers.authorization.split(" ")[1]) {
     token = req.headers.authorization.split(" ")[1];
   }
   if (!token) {
     res.status(401).send("You are not login please login to access");
-    return ;
+    return;
   }
-  const decoded=await promisify(jwt.verify)(token, process.env.SECRET_KEY);
-  console.log(decoded);
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+ 
   next();
 };
 exports.getusers = (req, res, next) => {
-  console.log(req.headers);
+
   res.status(201).json({
-    status: "you are succefully access protected route",
-  });
+    status:"You are successfully accessing a protected route "
+  })
+
+  
 };
+exports.googleAuth = (req, res, next) => {
+  passport.authenticate("google", {
+    scope: ["profile", "email"],
+  })(req, res, next);
+};
+exports.getGoogleAuth=(req,res,next)=>{
+ passport.authenticate('google', { failureRedirect: '/login' })(req, res, () => {
+   if(req.isAuthenticated()){
+    
+    res.send("authentcated");
+   }
+   else{
+    res.send("not authenticated");
+   }
+  });
+}
+exports.facebookAuth=(req,res,next)=>{
+  passport.authenticate("facebook")
+}
+exports.getFacebookAuth=(req,res,next)=>{
+  passport.authenticate('facebook', { failureRedirect: '/login' })(req, res, () => {
+    if(req.isAuthenticated()){
+     
+     res.send("authentcated");
+    }
+    else{
+     res.send("not authenticated");
+    }
+   });
+ }
+
+
