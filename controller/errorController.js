@@ -6,6 +6,18 @@ module.exports=(err,req,res,next)=>{
        message:"Duplicate entry not allowed in database"
       })
     }
+    if(err.name==='JsonWebTokenError'){
+    res.status(409).json({
+      status:"error",
+      message:"Invalid Token"
+    })
+    }
+    if(err.code==='ERR_HTTP_INVALID_STATUS_CODE'){
+      res.status(500).json({
+        status:"error",
+        message:"Invalid Status Code"
+      })
+    }
     else{
       err.code = err.code || 500;
       err.status = err.status || "error";

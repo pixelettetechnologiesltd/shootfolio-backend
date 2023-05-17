@@ -17,14 +17,15 @@ passport.use(
         googleId: profile.id,
         name: profile.displayName,
         email: email,
+        status: "Active",
       };
       try {
         let user = await User.findOne({ googleId: profile.id });
         if (user) {
           done(null, user);
         } else {
-          User.create(newUser);
-          done(null, user);
+          const createdUser = await User.create(newUser);
+          done(null, createdUser);
         }
       } catch (error) {
         console.log(error);
@@ -47,14 +48,15 @@ passport.use(
         facebookId: profile.id,
         name: profile.displayName,
         email: email,
+        status: "Active",
       };
       try {
         let user = await User.findOne({ facebookId: profile.id });
         if (user) {
           done(null, user);
         } else {
-          User.create(newUser);
-          done(null, user);
+          const createdUser = await User.create(newUser);
+          done(null, createdUser);
         }
       } catch (error) {
         console.log(error);
