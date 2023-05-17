@@ -35,6 +35,11 @@ const userSchema = new mongoose.Schema({
     enum:['Pending','Active'],
     default:'Pending'
   },
+  roles:{
+    type:String,
+    enum:['user','admin'],
+    default:'user'
+  },
   resetPasswordToken:String,
   resetPasswordExpires:String,
   confirmCode:{

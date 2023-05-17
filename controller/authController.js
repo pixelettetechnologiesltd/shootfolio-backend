@@ -6,6 +6,7 @@ const catchAsync = require("../utils/catchAsync");
 const sendEmail = require("../utils/Email");
 const crypto = require("crypto");
 const AppError = require("./../utils/appError");
+const protect = require("../middleware/protectMiddleware");
 const signtoken = (id) => {
   return jwt.sign(
     {
@@ -13,15 +14,15 @@ const signtoken = (id) => {
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: process.env.JWT_EXPIRES_IN,
+      expiresIn: Date.now() + 120000,
     }
   );
 };
-const cookieOption={
-  expires:Date.now()+process.env.JWT_EXPIRES_IN*24*60*60*1000,
+const cookieOption = {
+  expires: Date.now() + process.env.JWT_EXPIRES_IN * 24 * 60 * 60 * 1000,
   // secure:true,
-  httpOnly:true,
-  }
+  httpOnly: true,
+};
 exports.signup = catchAsync(async (req, res, next) => {
   const { name, email, password } = req.body;
   const longToken = crypto.randomBytes(32).toString("hex");
@@ -37,6 +38,7 @@ exports.signup = catchAsync(async (req, res, next) => {
     confirmCode: shortToken,
   };
   const user = await User.create(addUser);
+
   const token = signtoken(user._id);
   if (user) {
     sendEmail(req.body, user.confirmCode, (emailVerify = "emailVerify"));
@@ -69,7 +71,8 @@ exports.login = async (req, res, next) => {
       return;
     }
     const token = signtoken(user._id);
-    res.cookie('jwt',token,cookieOption);
+
+    res.cookie("jwt", token, cookieOption);
     res.status(201).json({
       status: "success",
       token,
@@ -78,6 +81,15 @@ exports.login = async (req, res, next) => {
     return next(new AppError("Pending Account. Please Verify Your Email", 401));
   }
 };
+exports.logout = catchAsync((req, res, next) => {
+  res.cookie('jwt','',{
+    httpOnly:true,
+    expires:new Date(0)
+  });
+  res.status(200).json({
+    message:"Logged out successfully"
+  })
+});
 exports.emailVerify = catchAsync(async (req, res, next) => {
   let result = await User.updateOne(
     {
@@ -135,27 +147,15 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   user.resetPasswordExpires = undefined;
   await user.save();
   res.status(201).json({
-    status: "Password Update successfully",
+    status: "Password Update Successfully",
   });
 });
-exports.protect = async (req, res, next) => {
-  let token = "";
-  if (req.headers.authorization && req.headers.authorization.split(" ")[1]) {
-    token = req.headers.authorization.split(" ")[1];
-  }
-  if (!token) {
-    res.status(401).send("You are not login please login to access");
-    return;
-  }
-  await promisify(jwt.verify)(token, process.env.JWT_SECRET);
 
-  next();
-};
-exports.getusers = (req, res, next) => {
+exports.getusers = catchAsync((req, res, next) => {
   res.status(201).json({
     status: "You are successfully accessing a protected route ",
   });
-};
+});
 exports.googleAuth = (req, res, next) => {
   passport.authenticate("google", {
     scope: ["profile", "email"],
@@ -166,9 +166,13 @@ exports.getGoogleAuth = (req, res, next) => {
     failureRedirect: "/login",
   })(req, res, () => {
     if (req.isAuthenticated()) {
-      res.send("authentcated");
+      const token = signtoken(req.user._id);
+      res.cookie("jwt", token, cookieOption);
+      protect(req, res, next);
+
+      // res.send("Authentcated");
     } else {
-      res.send("not authenticated");
+      res.send("Not Authenticated");
     }
   });
 };
@@ -180,9 +184,19 @@ exports.getFacebookAuth = (req, res, next) => {
     failureRedirect: "/login",
   })(req, res, () => {
     if (req.isAuthenticated()) {
+      const token = signtoken(req.user._id);
+      res.cookie("jwt", token, cookieOption);
+      protect(req, res, next);
       res.send("authentcated");
     } else {
       res.send("not authenticated");
     }
   });
 };
+// exports.restrictTo = (roles) => {
+//   return (req, res, next) => {
+//     if (!roles.include(req.user.role)) {
+//       return next(new AppError("You dont have permission to perform this action", 401));
+//     }
+//   };
+// };

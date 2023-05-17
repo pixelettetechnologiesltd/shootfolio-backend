@@ -15,7 +15,7 @@ app.use(cors())
 app.set("view engine", "ejs");
 app.use(
   session({
-    secret: process.env.SESSION_SECRETKEY,
+    secret: process.env.SESSION_SECRET_KEY,
     resave: false,
     saveUninitialized: true,
   })
@@ -28,9 +28,9 @@ const apilimiter=rateLimit({
 app.use(passport.initialize());
 app.use(passport.session());
 app.use("/api/shootfolio", userRouter);
+app.use("/api/coinMarketCap",userRouter)
 app.use("/api", apilimiter);
 app.all("*", (req, res, next) => {
-
   const err=new AppError(`Can't find ${req.originalUrl} on this server!`,404);
   next(err);
 });
