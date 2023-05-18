@@ -193,10 +193,4 @@ exports.getFacebookAuth = (req, res, next) => {
     }
   });
 };
-// exports.restrictTo = (roles) => {
-//   return (req, res, next) => {
-//     if (!roles.include(req.user.role)) {
-//       return next(new AppError("You dont have permission to perform this action", 401));
-//     }
-//   };
-// };
+
