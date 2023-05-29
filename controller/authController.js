@@ -7,6 +7,8 @@ const sendEmail = require("../utils/Email");
 const crypto = require("crypto");
 const AppError = require("./../utils/appError");
 const protect = require("../middleware/protectMiddleware");
+const { CreateOne, getAll, deleteOne, updateOne } = require("./handleFactory");
+
 const signtoken = (id) => {
   return jwt.sign(
     {
@@ -151,11 +153,9 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   });
 });
 
-exports.getusers = catchAsync((req, res, next) => {
-  res.status(201).json({
-    status: "You are successfully accessing a protected route ",
-  });
-});
+exports.getusers = getAll(User);
+ 
+
 exports.googleAuth = (req, res, next) => {
   passport.authenticate("google", {
     scope: ["profile", "email"],
