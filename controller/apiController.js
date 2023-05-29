@@ -24,6 +24,5 @@ const job =new CronJob('0 */5 * * * *', function() {
       res.status(500).json({ message: "Failed to save data" });
     }
   });
- 
 })
  job.start();

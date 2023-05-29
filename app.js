@@ -1,6 +1,8 @@
 const express = require("express");
 const userRouter = require("./route/userRouter");
 const teamRouter = require("./route/teamRouter");
+const gameRouter = require("./route/gameRouter");
+const transactionRouter = require("./route/transactionRouter");
 const passport = require("./config/passport");
 const session = require("express-session");
 const dotenv = require("dotenv");
@@ -31,6 +33,9 @@ app.use(passport.session());
 app.use("/api/shootfolio", userRouter);
 app.use("/api/coinMarketCap",userRouter)
 app.use("/api/shootfolio/team", teamRouter);
+app.use("/api/shootfolio/game", gameRouter);
+app.use("/api/shootfolio/transaction", transactionRouter);
+app.use("/api/shootfolio/setting", transactionRouter);
 app.use("/api", apilimiter);
 app.all("*", (req, res, next) => {
   const err=new AppError(`Can't find ${req.originalUrl} on this server!`,404);
