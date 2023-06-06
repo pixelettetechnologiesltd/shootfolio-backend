@@ -4,10 +4,13 @@ const jwt = require("jsonwebtoken");
 const AppError = require("./../utils/appError");
 const User = require("./../models/userModel");
 const protect = catchAsync(async (req, res, next) => {
-  let token = "";
-  if (req.headers.authorization && req.headers.authorization.split(" ")[1]) {
-    token = req.headers.authorization.split(" ")[1];
-  }
+  // let token = "";
+  // if (req.headers.authorization && req.headers.authorization.split(" ")[1]) {
+  //   token = req.headers.authorization.split(" ")[1];
+  // }
+  let token="";
+
+  token = req.cookies.jwt;
   if (!token) {
     res.status(401).send("You are not login please login to access");
     return;
@@ -34,4 +37,5 @@ const restrictTo = (role) => {
     next();
   };
 };
+
 module.exports = { protect, restrictTo };

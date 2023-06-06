@@ -1,15 +1,17 @@
 const express = require("express");
 const authController = require("./../controller/authController");
-const { protect, restrictTo }=require("../middleware/protectMiddleware")
+const { protect, restrictTo , }=require("../middleware/protectMiddleware")
 const apiController=require("./../controller/apiController")
+const userController=require("./../controller/userController")
 const router = express.Router();
 //authRoutes
+
 router.post("/signup", authController.signup);
 router.post("/login", authController.login);
 router.post("/logout",authController.logout);
 router.post("/forgotPassword", authController.forgotPassword);
 router.post("/resetPassword/:token", authController.resetPassword);
-router.route("/google").get(authController.googleAuth)
+router.route("/auth/google").get(authController.googleAuth)
 router.route("/facebook").get(authController.facebookAuth);
 router.route("/auth/google/callback").get(authController.getGoogleAuth);
 router.route("/auth/facebook/callback").get(authController.getFacebookAuth);
