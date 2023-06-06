@@ -23,28 +23,27 @@ const userSchema = new mongoose.Schema({
     // trim: true,
     // unique: true,
   },
-  
+
   password: {
     type: String,
     //required: [true, "Please Enter Valid Password"],
     // minlength: 10,
     select: false,
   },
-  status:{
-    type:String,
-    enum:['Pending','Active'],
-    default:'Pending'
+  status: {
+    type: String,
+    enum: ["Pending", "Active"],
+    default: "Pending",
   },
-  roles:{
-    type:String,
-    enum:['user','admin'],
-    default:'user'
+  roles: {
+    type: String,
+    enum: ["user", "admin"],
+    default: "user",
   },
-  resetPasswordToken:String,
-  resetPasswordExpires:String,
-  confirmCode:{
-    type:String,
-    unique:true
+  resetPasswordToken: String,
+  resetPasswordExpires: String,
+  confirmCode: {
+    type: String,
   },
   createdAt: {
     type: Date,

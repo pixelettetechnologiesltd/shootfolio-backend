@@ -4,7 +4,7 @@ const {protect,restrictTo}=require("../middleware/protectMiddleware")
 
 const router = express.Router();
 router.use(protect);
-router.use(restrictTo('admin'));
+router.use(restrictTo('Admin'));
 router.post("/gameAdd", gameController.gameAdd);
 router.get("/gameGet", gameController.gameGet);
 router.delete("/gameDelete/:id",gameController.gameDelete)

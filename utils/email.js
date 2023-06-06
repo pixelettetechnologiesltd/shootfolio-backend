@@ -30,7 +30,7 @@ else {
     to: email,
     subject: "hello from shootfolio",
     text: "Please Reset Your Password",
-    html: `Click <a href="http://localhost:4000/api/shootfolio/resetPassword/${token}">here</a> to reset your password.`
+    html: `Click <a href="http://localhost:3000/resetPassword/${token}">here</a> to reset your password.`
 
   };
  
