@@ -1,4 +1,4 @@
-const Team = require("./../models/teamModel");
+const Team = require("./../models/gameClubTeamModel");
 
 const { CreateOne, getAll, deleteOne, updateOne } = require("./handleFactory");
 
