@@ -64,9 +64,10 @@ exports.login = catchAsync(async (req, res, next) => {
     const userInfo = {
       email: user.email,
       name: user.name,
+      role:user.roles
     };
     const token = generateToken(user._id,res);
-    res.cookie("jwt", token);
+    res.cookie("jwt", token) 
     //console.log(res.getHeaders());
     res.status(201).json({
       status: "Login Successfully",
