@@ -50,13 +50,11 @@ exports.signup = catchAsync(async (req, res, next) => {
 });
 exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
-
   if (!email || !password) {
     return next(new AppError("Please provide email or password", 400));
   }
   const user = await User.findOne({ email }).select("+password");
   const match = await user?.correctPassword(password, user?.password);
-
   if (!user || !match) {
     return next(new AppError("Invalid Credentials", 401));
   }
@@ -69,7 +67,7 @@ exports.login = catchAsync(async (req, res, next) => {
     const token = generateToken(user._id,res);
     res.cookie("jwt", token) 
     //console.log(res.getHeaders());
-    res.status(201).json({
+    res.status(200).json({
       status: "Login Successfully",
       userInfo,
       
