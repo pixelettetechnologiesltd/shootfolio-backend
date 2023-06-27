@@ -4,7 +4,6 @@ const updateOne = (Model) => {
   return catchAsync(async (req, res, next) => {
    
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body);
-    console.log(doc);
     if (!doc) {
       return next(new AppError("No doc found with that ID", 404));
     }
