@@ -11,15 +11,16 @@ module.exports = (err, req, res, next) => {
       message: "Invalid Token",
     });
   }
-  if (err.code === "ERR_HTTP_INVALID_STATUS_CODE") {
-    return res.status(500).json({
-      status: "error",
-      message: "Invalid Status Code",
-    });
-  }
+  // if (err.code === "ERR_HTTP_INVALID_STATUS_CODE") {
+  //   return res.status(500).json({
+  //     status: "error",
+  //     message: "Invalid Status Code",
+  //   });
+  // }
 
   // Default error handling
   err.code = err.code || 500;
+
   err.status = err.status || "error";
   res.status(err.code).json({
     status: err.status,
