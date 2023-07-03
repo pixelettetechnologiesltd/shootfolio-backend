@@ -1,3 +1,4 @@
+
 const express = require("express");
 const userRouter = require("./route/userRouter");
 const teamRouter = require("./route/teamRouter");
@@ -11,22 +12,19 @@ const rateLimit = require('express-rate-limit')
 const cors=require("cors")
 const multer  = require('multer')
 const cookieParser = require('cookie-parser')
+
 const bodyParser = require('body-parser');
-dotenv.config({ path: "./config.env" });
+const path = require('path');
+dotenv.config();
 const app = express();
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors({ origin: '*' }));
-// app.use(
-//   cors({
-//     origin: "http://localhost:3001",
-//     methods: "GET,POST,PUT,DELETE",
-//     credentials: true,
-//   })
-// );
 
-app.set("view engine", "ejs");
+app.use(cors({ origin: '*' }));
+
+
+app.set('view engine', 'ejs');
 app.use(
   session({
     secret: process.env.SESSION_SECRET_KEY,
@@ -34,22 +32,33 @@ app.use(
     saveUninitialized: true,
   })
 );
-const apilimiter=rateLimit({
-  windowMs: 5 * 60 * 1000, 
-	max: 10,
-  message:"Too many requests from this IP, please try again after 5 minutes"
-})
+const apilimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 10,
+  message: 'Too many requests from this IP, please try again after 5 minutes',
+});
 app.use(passport.initialize());
 app.use(passport.session());
-app.use("/api/shootfolio", userRouter);
-app.use("/api/coinMarketCap",userRouter)
-app.use("/api/shootfolio/team", teamRouter);
-app.use("/api/shootfolio/game", gameRouter);
+app.use('/api/shootfolio', userRouter);
+app.use('/api/coinMarketCap', userRouter);
+app.use('/api/shootfolio/team', teamRouter);
+app.use('/api/shootfolio/game', gameRouter);
 
-app.use("/api", apilimiter);
-app.all("*", (req, res, next) => {
-  const err=new AppError(`Can't find ${req.originalUrl} on this server!`,404);
+app.use('/api', apilimiter);
+
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static('client/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
+app.all('*', (req, res, next) => {
+  const err = new AppError(
+    `Can't find ${req.originalUrl} on this server!`,
+    404
+  );
   next(err);
 });
 app.use(errorController);
-module.exports = app; 
+module.exports = app;
