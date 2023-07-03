@@ -9,6 +9,7 @@ const AppError=require("./utils/appError")
 const errorController=require("./controller/errorController")
 const rateLimit = require('express-rate-limit')
 const cors=require("cors")
+const multer  = require('multer')
 const cookieParser = require('cookie-parser')
 const bodyParser = require('body-parser');
 dotenv.config({ path: "./config.env" });
@@ -17,13 +18,13 @@ app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors({ origin: '*' }));
-app.use(
-  cors({
-    origin: "http://localhost:3000",
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true,
-  })
-);
+// app.use(
+//   cors({
+//     origin: "http://localhost:3001",
+//     methods: "GET,POST,PUT,DELETE",
+//     credentials: true,
+//   })
+// );
 
 app.set("view engine", "ejs");
 app.use(
