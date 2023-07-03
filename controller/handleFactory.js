@@ -40,7 +40,6 @@ const getOne = (Model) => {
 const CreateOne = (Model) => {
   return catchAsync(async (req, res, next) => {
     const doc = await Model.create(req.body);
-   
     if (doc) {
       const { _id, title } = doc; 
       res.status(201).json({
@@ -64,4 +63,16 @@ const getAll = (Model) => {
   });
 };
 
-module.exports = { CreateOne, getAll, deleteOne, updateOne,getOne };
+const getGameModes = (Model) => {
+  return catchAsync(async (req, res, next) => {
+    const doc = await Model.findOne({gameType:req.params.id});
+    res.status(200).json({
+      status: "success",
+      results: doc.length,
+      data: {
+        data: doc,
+      },
+    });
+  });
+};
+module.exports = { CreateOne, getAll, deleteOne, updateOne,getOne,getGameModes };

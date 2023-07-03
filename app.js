@@ -1,15 +1,18 @@
-const express = require('express');
-const userRouter = require('./route/userRouter');
-const teamRouter = require('./route/teamRouter');
-const gameRouter = require('./route/gameRouter');
-const passport = require('./config/passport');
-const session = require('express-session');
-const dotenv = require('dotenv');
-const AppError = require('./utils/appError');
-const errorController = require('./controller/errorController');
-const rateLimit = require('express-rate-limit');
-const cors = require('cors');
-const cookieParser = require('cookie-parser');
+
+const express = require("express");
+const userRouter = require("./route/userRouter");
+const teamRouter = require("./route/teamRouter");
+const gameRouter = require("./route/gameRouter");
+const passport = require("./config/passport");
+const session = require("express-session");
+const dotenv = require("dotenv");
+const AppError=require("./utils/appError")
+const errorController=require("./controller/errorController")
+const rateLimit = require('express-rate-limit')
+const cors=require("cors")
+const multer  = require('multer')
+const cookieParser = require('cookie-parser')
+
 const bodyParser = require('body-parser');
 const path = require('path');
 dotenv.config();
@@ -17,7 +20,9 @@ const app = express();
 app.use(cookieParser());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors('*'));
+
+app.use(cors({ origin: '*' }));
+
 
 app.set('view engine', 'ejs');
 app.use(
