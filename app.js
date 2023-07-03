@@ -12,6 +12,7 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const path = require('path');
+const { subcriptionRoutes } = require('./subscription/route');
 dotenv.config();
 const app = express();
 app.use(cookieParser());
@@ -38,6 +39,7 @@ app.use('/api/shootfolio', userRouter);
 app.use('/api/coinMarketCap', userRouter);
 app.use('/api/shootfolio/team', teamRouter);
 app.use('/api/shootfolio/game', gameRouter);
+app.use('/api/shootfolio/subcription', subcriptionRoutes);
 
 app.use('/api', apilimiter);
 
