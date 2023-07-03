@@ -1,28 +1,21 @@
 const User = require("./../models/userModel");
-const jwt = require("jsonwebtoken");
-const { promisify } = require("util");
 const passport = require("../config/passport");
 const catchAsync = require("../utils/catchAsync");
 const sendEmail = require("../utils/email");
 const crypto = require("crypto");
 const AppError = require("./../utils/appError");
-const protect = require("../middleware/protectMiddleware");
 const generateToken = require('./../config/jwtToken');
-const { CreateOne, getAll, deleteOne, updateOne } = require("./handleFactory");
 
 
-const cookieOption = {
-  httpOnly: true,
-  sameSite: "strict", // Prevent CSRF attacks
-  maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
-};
 exports.signup = catchAsync(async (req, res, next) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, cPassword } = req.body;
   const emailExists = await User.findOne({ email });
   if (emailExists) {
-    return next(new AppError("Email already exists", 400));
+    res.status(201).json({
+      status: "Email already exists",
+    });
+   return ;
   }
-
   const longToken = crypto.randomBytes(32).toString("hex");
   const shortToken = crypto
     .createHash("sha256")
@@ -64,13 +57,11 @@ exports.login = catchAsync(async (req, res, next) => {
       name: user.name,
       role:user.roles
     };
-    const token = generateToken(user._id,res);
-    res.cookie("jwt", token) 
-    //console.log(res.getHeaders());
+   const token =generateToken(user._id,res);
     res.status(200).json({
       status: "Login Successfully",
       userInfo,
-      
+      token
     });
   } else {
     return next(new AppError("Pending Account. Please Verify Your Email", 401));
@@ -108,8 +99,12 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   const user = await User.findOne({
     email: req.body.email,
   });
+  console.log(user);
   if (!user) {
-    return next(new AppError("User not found", 401));
+    res.status(404).json({
+      status:"User not found"
+    })
+    return;
   }
   const token = crypto.randomBytes(20).toString("hex");
   user.resetPasswordToken = token;
@@ -117,13 +112,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await user.save();
   sendEmail(req.body, token, (forgotPasswordEmail = "forgotPasswordEmail"));
   res.status(201).json({
-    status: "Success",
-    message: "Please Check your Email Associted with account",
+    status: "Please Check your Email Associted with account",
   });
 });
 exports.resetPassword = catchAsync(async (req, res, next) => {
-  const { token } = req.params;
-
+  const { token } = req.params
   const user = await User.findOne({
     resetPasswordToken: token,
     resetPasswordExpires: {
@@ -131,23 +124,21 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     },
   });
   if (!user) {
-    return next(new AppError("Invalid or expired token", 401));
+    res.status(401).json({
+      status: "Invalid or expired token",
+    });
+    return;
   }
-  const newPassword = req.body.newPassword;
-  const confirmPassword = req.body.confirmPassword;
-  if (newPassword != confirmPassword) {
-    return next(new AppError("Passwords do not match", 401));
-  }
-  user.password = newPassword;
+  user.password = req.body.newPassword;
   user.resetPasswordToken = undefined;
   user.resetPasswordExpires = undefined;
   await user.save();
   res.status(201).json({
-    status: "Password Update Successfully",
+    status: "Success",
   });
 });
 
-exports.getusers = getAll(User);
+
 
 exports.googleAuth = (req, res, next) => {
  

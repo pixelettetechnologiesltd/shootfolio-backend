@@ -16,7 +16,7 @@ router.route("/facebook").get(authController.facebookAuth);
 router.route("/auth/google/callback").get(authController.getGoogleAuth);
 router.route("/auth/facebook/callback").get(authController.getFacebookAuth);
 router.route("/confirm/:token").get(authController.emailVerify);
-router.route("/getusers").get(protect,restrictTo("admin"), authController.getusers);
+router.route("/getusers").get(protect,restrictTo("admin"), userController.getusers);
 // router.route("/getusers").get(authController.protect,authController.restrictTo("Admin"), authController.getusers);
 //CoinMarketCapApiRoutes
 //router.route("/exchange/assets").get(apiController.coinCapMarketInfo);

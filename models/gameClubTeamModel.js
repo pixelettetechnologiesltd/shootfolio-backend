@@ -6,6 +6,10 @@ const gameClubTeamSchema=new mongoose.Schema({
         ref: "Gametype",
         required: true,
       },
+    clublogo:{
+     data:Buffer,
+     contentType:String,
+    },
     title:{
         type:String,
         required:true,
@@ -17,7 +21,7 @@ const gameClubTeamSchema=new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        enum: ["Active", "inActive"],
+        enum: ["true", "false"],
       },
     createdAt: {
         type: Date, 
