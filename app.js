@@ -9,7 +9,6 @@ const AppError = require("./utils/appError");
 const errorController = require("./controller/errorController");
 const rateLimit = require("express-rate-limit");
 const cors = require("cors");
-const multer = require("multer");
 const cookieParser = require("cookie-parser");
 
 const bodyParser = require("body-parser");
