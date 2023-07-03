@@ -6,18 +6,19 @@ const gameSchema = new mongoose.Schema({
     unique: true,
     enum: ["Tennis", "Football", "BasketBall", "VolleyBall"],
   },
-  iconUrl: {
-    type: String,
-    required: true,
-  },
-  quizAccess: {
-    type: String,
-    required: true,
-  },
+  iconUrl:{
+    data:Buffer,
+    contentType:String,
+   },
+  
   status: {
     type: String,
     required: true,
     enum: ["Active", "inActive", "Coming Soon"],
+  },
+  quizAccess: {
+    type: String,
+    enum: ["true", "false"],
   },
 });
 

@@ -15,12 +15,6 @@ const gameLeagueSchema = new mongoose.Schema({
     type: String,
     required: true,
     unique: true,
-    enum: [
-      "Crypto Amateur Learners League",
-      "Crypto Beginner Learners League",
-      "Crypto Advanced Advisors League",
-      "Crypto Professional Advisors League",
-    ],
   },
   investableBudget: {
     type: String,
@@ -36,7 +30,7 @@ const gameLeagueSchema = new mongoose.Schema({
   status: {
     type: String,
     required: true,
-    enum: ["Active", "inActive"],
+    enum: ["true", "false"],
   },
   createdAt: {
     type: Date,

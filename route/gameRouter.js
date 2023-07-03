@@ -5,17 +5,21 @@ const { protect, restrictTo } = require("../middleware/protectMiddleware");
 const router = express.Router();
 // router.use(protect);
 // router.use(restrictTo("Admin"));
+//Admin Dashboard Route
+//gameRoute
 router.post("/gameAdd", gameController.gameAdd);
 router.get("/gameGet", gameController.gameGet);
 router.get("/gameGetOne/:id",gameController.gameGetOne)
 router.delete("/gameDelete/:id", gameController.gameDelete);
 router.patch("/gameUpdate/:id", gameController.gameUpdate);
+
 //gameMode Routes
 router.post("/gameModeAdd", gameController.gameModeAdd);
 router.get("/gameGetMode", gameController.gameGetMode);
 router.delete("/gameModeDelete/:id", gameController.gameModeDelete);
 router.get("/gameGetOneMode/:id",gameController.gameGetOneMode)
 router.patch("/updateOneGameMode/:id", gameController.updateOneGameMode);
+
 //gameLeague Routes
 router.post("/leagueAdd", gameController.leagueAdd);
 router.get("/leagueGet", gameController.leagueGet);
@@ -28,4 +32,10 @@ router.get("/clubGet", gameController.clubGet);
 router.get("/clubGetOne/:id",gameController.clubGetOne)
 router.delete("/clubDelete/:id", gameController.clubDelete);
 router.patch("/clubUpdate/:id", gameController.clubUpdate);
+
+//userSideRoute
+router.get("/gameMode/:id",protect,gameController.gameModes)
+
+//portfolioAdd
+router.post("/portFolioAdd", gameController.portFolioAdd);
 module.exports = router;
